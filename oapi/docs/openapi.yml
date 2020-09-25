@@ -1,0 +1,83 @@
+openapi: 3.0.3
+
+info:
+  title: OpenApi Spec Demo
+  version: 1.0.0
+  description: Some random service tht does some random stuff
+  contact:
+    name: KP
+
+servers:
+  - url: http://localhost
+    description: The local environmen (when you're running the service on your local machine)
+
+tags:
+  - name: Customers
+    description: Endpoints relating to customer records
+  - name: Miscellaneous
+    description: Endpoints that don't have anything to do with users.
+
+paths:
+  /ping:
+    get:
+      summary: Endpoint to check whether service is healthy
+      description: Used by the AWS ELB healthcheck to see if service is healthy. Also used by cypress tests, to ensure mocked server is ready before we run actual tests.
+      tags:
+        - Miscellaneous
+      responses:
+        "200":
+          description: Request processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    description: "What do you get when you ping? A pong."
+                    type: string
+                    example: "pong"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /customer:
+    post:
+      summary: Creates a new customer
+      tags:
+        - Customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                height:
+                  type: integer
+                  minimum: 50
+                  maximum: 275
+              required:
+                - email
+                - height
+      responses:
+        "200":
+          description: Request processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+components:
+  responses:
+    BadRequestError:
+      description: Bad request. Possibly missing required params
+    ServerError:
+      description: Internal Server Error

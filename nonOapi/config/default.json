@@ -1,0 +1,10 @@
+{
+  "useSecretsManager": true,
+  "log": {
+    "name": "openapi-validation-demo",
+    "level": "debug"
+  },
+  "express": {
+    "port": 80
+  }
+}
